@@ -27,7 +27,6 @@ const quizQuestions = [
         options: ["=POSITION()", "=RECHERCHE()", "=EQUIV()", "=INDEX()"],
         answer: 2
       }
-      // Ajoute 3-5 questions supplémentaires si souhaité…
     ]
   },
   {
@@ -53,7 +52,6 @@ const quizQuestions = [
         options: ["Clic droit > Disposer", "Utiliser les repères intelligents", "Tirer avec la souris", "Accueil > Copier"],
         answer: 1
       }
-      // Ajoute 4-6 questions supplémentaires si souhaité…
     ]
   }
 ];
