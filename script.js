@@ -66,7 +66,6 @@ function showAnswer() {
 
   userAnswers.push(parseInt(selectedOption.value));
 
-  // Désactive les radios après choix
   container.querySelectorAll('input[name="answer"]').forEach(input => input.disabled = true);
 
   const answerText = qObj.options[qObj.answer];
@@ -80,7 +79,12 @@ function showAnswer() {
   }
   container.appendChild(feedback);
 
-  nextBtn.textContent = "Suivant";
+  const isLastQuestion =
+    currentThemeIndex === quizQuestions.length - 1 &&
+    currentQuestionIndex === quizQuestions[currentThemeIndex].questions.length - 1;
+
+  nextBtn.textContent = isLastQuestion ? "Terminer" : "Suivant";
+
   isAnswerShown = true;
   nextBtn.disabled = false;
 }
