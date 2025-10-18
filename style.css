@@ -17,6 +17,7 @@ header {
 h1 {
   color: #1e5c96;
   font-size: 2.1em;
+  margin: 0;
 }
 main {
   max-width: 560px;
