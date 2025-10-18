@@ -45,6 +45,7 @@ function displayQuestion() {
 
   nextBtn.disabled = true;
   nextBtn.textContent = "Valider la réponse";
+  nextBtn.style.display = "inline-block";
 
   container.querySelectorAll('input[name="answer"]').forEach(input => {
     input.addEventListener("change", () => {
@@ -108,7 +109,7 @@ nextBtn.addEventListener("click", () => {
     }
     if (currentThemeIndex >= quizQuestions.length) {
       container.classList.add("hidden");
-      nextBtn.classList.add("hidden");
+      nextBtn.style.display = "none";  // Masque le bouton Terminer ici
       showResults();
     } else {
       displayQuestion();
@@ -118,7 +119,8 @@ nextBtn.addEventListener("click", () => {
 
 function showResults() {
   resultDiv.classList.remove("hidden");
-  let html = "<h2>Résultats par thème :</h2><ul>";
+  let html = "<h2>Merci d'avoir passé le quiz !</h2><br/>";
+  html += "<h3>Résultats par thème :</h3><ul>";
   scoreByTheme.forEach(th => {
     html += `<li>${th.theme} : <b>${th.score}</b> / ${th.total}</li>`;
   });
