@@ -6,14 +6,14 @@ const container = document.getElementById("quiz-container");
 const nextBtn = document.getElementById("next-btn");
 const resultDiv = document.getElementById("result-container");
 
+let isAnswerShown = false;
+
 function displayQuestion() {
   const theme = quizQuestions[currentThemeIndex];
   const qObj = theme.questions[currentQuestionIndex];
 
-  // Vider le contenu précédent
   container.innerHTML = "";
 
-  // Affiche le titre du thème uniquement pour la première question du thème
   if (currentQuestionIndex === 0) {
     const themeTitle = document.createElement("div");
     themeTitle.className = "theme-title";
@@ -21,7 +21,6 @@ function displayQuestion() {
     container.appendChild(themeTitle);
   }
 
-  // Construire la question et options
   const divQuestion = document.createElement("div");
   divQuestion.className = "question";
   divQuestion.textContent = qObj.question;
@@ -45,46 +44,71 @@ function displayQuestion() {
   container.appendChild(divOptions);
 
   nextBtn.disabled = true;
+  nextBtn.textContent = "Valider la réponse";
 
   container.querySelectorAll('input[name="answer"]').forEach(input => {
     input.addEventListener("change", () => {
       nextBtn.disabled = false;
     });
   });
+
+  isAnswerShown = false;
 }
 
-function scoreTheme() {
+function showAnswer() {
   const theme = quizQuestions[currentThemeIndex];
-  let score = 0;
-  for (let i = 0; i < theme.questions.length; i++) {
-    if (theme.questions[i].answer === userAnswers[userAnswers.length - theme.questions.length + i]) {
-      score++;
-    }
-  }
-  scoreByTheme.push({ theme: theme.theme, score, total: theme.questions.length });
-}
-
-nextBtn.addEventListener("click", () => {
+  const qObj = theme.questions[currentQuestionIndex];
   const selectedOption = container.querySelector('input[name="answer"]:checked');
   if (!selectedOption) {
     alert("Veuillez sélectionner une réponse.");
     return;
   }
+
   userAnswers.push(parseInt(selectedOption.value));
 
-  currentQuestionIndex++;
-  if (currentQuestionIndex >= quizQuestions[currentThemeIndex].questions.length) {
-    scoreTheme();
-    currentThemeIndex++;
-    currentQuestionIndex = 0;
-  }
+  // Désactive les radios après choix
+  container.querySelectorAll('input[name="answer"]').forEach(input => input.disabled = true);
 
-  if (currentThemeIndex >= quizQuestions.length) {
-    container.classList.add("hidden");
-    nextBtn.classList.add("hidden");
-    showResults();
+  const answerText = qObj.options[qObj.answer];
+  const userChoice = qObj.options[parseInt(selectedOption.value)];
+  const feedback = document.createElement("div");
+  feedback.style.marginTop = "15px";
+  if (qObj.answer === parseInt(selectedOption.value)) {
+    feedback.innerHTML = `<span style="color:green; font-weight:bold;">Bonne réponse !</span> (${answerText})`;
   } else {
-    displayQuestion();
+    feedback.innerHTML = `<span style="color:red; font-weight:bold;">Mauvaise réponse.</span> La bonne réponse est : <strong>${answerText}</strong>. Vous avez choisi : ${userChoice}.`;
+  }
+  container.appendChild(feedback);
+
+  nextBtn.textContent = "Suivant";
+  isAnswerShown = true;
+  nextBtn.disabled = false;
+}
+
+nextBtn.addEventListener("click", () => {
+  if (!isAnswerShown) {
+    showAnswer();
+  } else {
+    currentQuestionIndex++;
+    const theme = quizQuestions[currentThemeIndex];
+    if (currentQuestionIndex >= theme.questions.length) {
+      let score = 0;
+      for (let i = 0; i < theme.questions.length; i++) {
+        if (theme.questions[i].answer === userAnswers[userAnswers.length - theme.questions.length + i]) {
+          score++;
+        }
+      }
+      scoreByTheme.push({ theme: theme.theme, score, total: theme.questions.length });
+      currentThemeIndex++;
+      currentQuestionIndex = 0;
+    }
+    if (currentThemeIndex >= quizQuestions.length) {
+      container.classList.add("hidden");
+      nextBtn.classList.add("hidden");
+      showResults();
+    } else {
+      displayQuestion();
+    }
   }
 });
 
@@ -103,4 +127,3 @@ function showResults() {
 }
 
 displayQuestion();
-
